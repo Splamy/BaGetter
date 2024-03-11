@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BaGetter.Core.Search;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -103,7 +104,11 @@ public static partial class DependencyInjectionExtensions
             if (!config.HasSearchType(DatabaseSearchType)) return null;
             if (!config.HasDatabaseType(databaseType)) return null;
 
-            return provider.GetRequiredService<DatabaseSearchService>();
+            var db = provider.GetRequiredService<DatabaseSearchService>();
+            var upstream = provider.GetRequiredService<UpstreamSearchService>();
+            return new AggregateSearchService(
+                [db, upstream],
+                provider.GetRequiredService<IUrlGenerator>());
         });
 
         return services;

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
+using BaGetter.Core.Search;
 using BaGetter.Protocol;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -101,6 +102,7 @@ public static partial class DependencyInjectionExtensions
         services.TryAddTransient<ISymbolStorageService, SymbolStorageService>();
 
         services.TryAddTransient<DatabaseSearchService>();
+        services.TryAddTransient<UpstreamSearchService>();
         services.TryAddTransient<FileStorageService>();
         services.TryAddTransient<PackageService>();
         services.TryAddTransient<V2UpstreamClient>();
@@ -166,6 +168,8 @@ public static partial class DependencyInjectionExtensions
         // the database search service's registration until the very end.
         services.TryAddTransient<ISearchIndexer>(provider => provider.GetRequiredService<NullSearchIndexer>());
         services.TryAddTransient<ISearchService>(provider => provider.GetRequiredService<DatabaseSearchService>());
+        services.TryAddTransient<ISearchService>(provider => provider.GetRequiredService<UpstreamSearchService>());
+
     }
 
     private static HttpClient HttpClientFactory(IServiceProvider provider)

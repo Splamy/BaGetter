@@ -16,17 +16,20 @@ namespace BaGetter.Core;
 /// </summary>
 public class V3UpstreamClient : IUpstreamClient
 {
-    private readonly NuGetClient _client;
-    private readonly ILogger<V3UpstreamClient> _logger;
     private static readonly char[] AuthorSeparator = [',', ';', '\t', '\n', '\r'];
     private static readonly char[] TagSeparator = [' '];
 
-    public V3UpstreamClient(NuGetClient client, ILogger<V3UpstreamClient> logger)
+    private readonly NuGetClient _client;
+    private readonly ILogger<V3UpstreamClient> _logger;
+    private readonly ISearchClient _searchClient;
+
+    public V3UpstreamClient(NuGetClientFactory clientFactory, ILogger<V3UpstreamClient> logger)
     {
-        ArgumentNullException.ThrowIfNull(client);
+        ArgumentNullException.ThrowIfNull(clientFactory);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _client = client;
+        _client = new NuGetClient(clientFactory);
+        _searchClient = clientFactory.CreateSearchClient();
         _logger = logger;
     }
 
@@ -85,6 +88,16 @@ public class V3UpstreamClient : IUpstreamClient
             _logger.LogError(e, "Failed to mirror {PackageId}'s upstream versions", id);
             return new List<NuGetVersion>();
         }
+    }
+
+    public virtual async Task<SearchResponse> SearchAsync(SearchRequest request, CancellationToken cancellationToken)
+    {
+        return await _searchClient.SearchAsync(
+            request.Query,
+            request.Skip,
+            request.Take,
+            request.IncludePrerelease,
+            cancellationToken: cancellationToken);
     }
 
     private Package ToPackage(PackageMetadata metadata)

@@ -1,4 +1,5 @@
-﻿using BaGetter.Protocol.Models;
+using BaGetter.Protocol;
+using BaGetter.Protocol.Models;
 using NuGet.Versioning;
 using System.Collections.Generic;
 using System.IO;
@@ -47,4 +48,7 @@ public interface IUpstreamClient
     /// The stream is guaranteed to be seekable if not not null.
     /// </returns>
     Task<Stream> DownloadPackageOrNullAsync(string id, NuGetVersion version, CancellationToken cancellationToken);
+
+    // XXX
+    Task<SearchResponse> SearchAsync(SearchRequest request, CancellationToken cancellationToken);
 }

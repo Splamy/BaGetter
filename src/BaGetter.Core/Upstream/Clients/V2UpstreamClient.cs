@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BaGetter.Protocol.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NuGet.Common;
@@ -143,6 +144,11 @@ public class V2UpstreamClient : IUpstreamClient, IDisposable
             packageStream.Dispose();
             return null;
         }
+    }
+
+    public Task<SearchResponse> SearchAsync(SearchRequest request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 
     public void Dispose()

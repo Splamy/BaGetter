@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using BaGetter.Protocol.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,8 +12,9 @@ namespace BaGetter.Core;
 /// </summary>
 public class DisabledUpstreamClient : IUpstreamClient
 {
-    private readonly IReadOnlyList<NuGetVersion> _emptyVersionList = new List<NuGetVersion>();
-    private readonly IReadOnlyList<Package> _emptyPackageList = new List<Package>();
+    private readonly IReadOnlyList<NuGetVersion> _emptyVersionList = [];
+    private readonly IReadOnlyList<Package> _emptyPackageList = [];
+    private readonly IReadOnlyList<SearchResult> _emptySearchResults = [];
 
     public Task<IReadOnlyList<NuGetVersion>> ListPackageVersionsAsync(string id, CancellationToken cancellationToken)
     {
@@ -31,4 +33,10 @@ public class DisabledUpstreamClient : IUpstreamClient
     {
         return Task.FromResult<Stream>(null);
     }
+
+    public Task<SearchResponse> SearchAsync(SearchRequest request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(new SearchResponse() { Context = SearchContext.Default(""), TotalHits = 0, Data = [] });
+    }
+
 }
